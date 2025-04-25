@@ -15,6 +15,7 @@ async function bootstrap() {
         'http://localhost:3000',
         'http://192.168.0.11:3001',
         'https://extremesoftware.tech',
+        'https://api-gest-o-production.up.railway.app',
       ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       allowedHeaders: 'Content-Type, Authorization',
