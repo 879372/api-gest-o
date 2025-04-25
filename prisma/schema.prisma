@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Empresa {
+  id                 Int          @id @default(autoincrement())
+  nome               String
+  fantasia           String?
+  tipo               String
+  documento          String       @unique
+  inscricaoEstadual  String?
+  inscricaoMunicipal String?
+  regimeTributario   String?
+  csc                String?
+  cscId              String?
+  email              String?
+  telefone           String?
+  cep                String?
+  uf                 String?
+  bairro             String?
+  cidade             String?
+  endereco           String?
+  logo               String?
+  usuarios           Usuario[]
+  clientes           Cliente[]
+  produtos           Produto[]
+  notasFiscais       NotaFiscal[]
+  criadoEm           DateTime     @default(now())
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  empresaId Int
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  criadoEm  DateTime @default(now())
+}
+
+model Cliente {
+  id                Int          @id @default(autoincrement())
+  nome              String
+  tipo              String
+  documento         String       @unique
+  inscricaoEstadual String?
+  email             String?
+  telefone          String?
+  cep               String?
+  uf                String?
+  bairro            String?
+  cidade            String?
+  endereco          String?
+  empresaId         Int
+  empresa           Empresa      @relation(fields: [empresaId], references: [id])
+  notasFiscais      NotaFiscal[]
+  criadoEm          DateTime     @default(now())
+}
+
+model Produto {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  descricao    String?
+  unidade      String
+  precoCusto   Decimal       @db.Decimal(10, 2)
+  precoVenda   Decimal       @db.Decimal(10, 2)
+  origem       String?
+  empresaId    Int
+  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  estoque      Estoque?
+  notaProdutos NotaProduto[]
+  cfopId       Int?
+  cfop         CFOP?         @relation(fields: [cfopId], references: [id])
+  ncmId        Int?
+  ncm          NCM?          @relation(fields: [ncmId], references: [id])
+  cstId        Int?
+  cst          CST?          @relation(fields: [cstId], references: [id])
+  csosnId      Int?
+  csosn        CSOSN?        @relation(fields: [csosnId], references: [id])
+  criadoEm     DateTime      @default(now())
+}
+
+model Estoque {
+  id         Int     @id @default(autoincrement())
+  produtoId  Int     @unique
+  quantidade Int
+  produto    Produto @relation(fields: [produtoId], references: [id])
+}
+
+model NotaFiscal {
+  id               Int           @id @default(autoincrement())
+  numero           Int
+  serie            Int
+  tipo             String
+  naturezaOperacao String
+  modelo           String
+  ambiente         String
+  chaveAcesso      String        @unique
+  dataEmissao      DateTime
+  valorProdutos    Decimal       @db.Decimal(10, 2)
+  valorTotal       Decimal       @db.Decimal(10, 2)
+  clienteId        Int
+  empresaId        Int
+  cliente          Cliente       @relation(fields: [clienteId], references: [id])
+  empresa          Empresa       @relation(fields: [empresaId], references: [id])
+  notaProdutos     NotaProduto[]
+  status           String
+  xml              String
+  criadoEm         DateTime      @default(now())
+}
+
+model NotaProduto {
+  id            Int        @id @default(autoincrement())
+  notaFiscalId  Int
+  produtoId     Int
+  quantidade    Int
+  valorUnitario Decimal    @db.Decimal(10, 2)
+  subtotal      Decimal    @db.Decimal(10, 2)
+  cfopId        Int
+  ncmId         Int
+  cstId         Int
+  csosnId       Int?
+  icms          Decimal?   @db.Decimal(5, 2)
+  pis           Decimal?   @db.Decimal(5, 2)
+  cofins        Decimal?   @db.Decimal(5, 2)
+  notaFiscal    NotaFiscal @relation(fields: [notaFiscalId], references: [id])
+  produto       Produto    @relation(fields: [produtoId], references: [id])
+  cfop          CFOP       @relation(fields: [cfopId], references: [id])
+  ncm           NCM        @relation(fields: [ncmId], references: [id])
+  cst           CST        @relation(fields: [cstId], references: [id])
+  csosn         CSOSN?     @relation(fields: [csosnId], references: [id])
+}
+
+model CFOP {
+  id           Int           @id @default(autoincrement())
+  codigo       String        @unique
+  descricao    String
+  produtos     Produto[]
+  notaProdutos NotaProduto[]
+}
+
+model NCM {
+  id           Int           @id @default(autoincrement())
+  codigo       String        @unique
+  descricao    String
+  produtos     Produto[]
+  notaProdutos NotaProduto[]
+}
+
+model CST {
+  id           Int           @id @default(autoincrement())
+  codigo       String        @unique
+  descricao    String
+  produtos     Produto[]
+  notaProdutos NotaProduto[]
+}
+
+model CSOSN {
+  id           Int           @id @default(autoincrement())
+  codigo       String        @unique
+  descricao    String
+  produtos     Produto[]
+  notaProdutos NotaProduto[]
+}
