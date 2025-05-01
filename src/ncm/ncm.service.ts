@@ -49,6 +49,7 @@ export class NcmService {
       where: { id },
       select: {
         id: true,
+        codigo: true,
         descricao: true,
       },
     });

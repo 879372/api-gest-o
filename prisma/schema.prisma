@@ -31,6 +31,7 @@ model Empresa {
   notasFiscais       NotaFiscal[]
   produtos           Produto[]
   usuarios           Usuario[]
+  vendas             Venda[]
 }
 
 model Usuario {
@@ -40,6 +41,7 @@ model Usuario {
   senha     String
   empresaId Int
   criadoEm  DateTime @default(now())
+  vendas    Venda[]
   empresa   Empresa  @relation(fields: [empresaId], references: [id])
 }
 
@@ -58,6 +60,7 @@ model Cliente {
   inscricaoEstadual String?
   tipo              String
   uf                String?
+  vendas            Venda[]
   empresa           Empresa      @relation(fields: [empresaId], references: [id])
   notasFiscais      NotaFiscal[]
 }
@@ -83,6 +86,7 @@ model Produto {
   cst          CST?          @relation(fields: [cstId], references: [id])
   empresa      Empresa       @relation(fields: [empresaId], references: [id])
   ncm          NCM?          @relation(fields: [ncmId], references: [id])
+  VendaItem    VendaItem[]
 }
 
 model Estoque {
@@ -90,6 +94,56 @@ model Estoque {
   produtoId  Int     @unique
   quantidade Int
   produto    Produto @relation(fields: [produtoId], references: [id])
+}
+
+model FormaPagamento {
+  id        Int    @id @default(autoincrement())
+  descricao String @unique
+
+  pagamentos PagamentoVenda[]
+}
+
+model PagamentoVenda {
+  id               Int     @id @default(autoincrement())
+  vendaId          Int
+  formaPagamentoId Int
+  valor            Decimal @db.Decimal(10, 2)
+
+  venda          Venda          @relation(fields: [vendaId], references: [id])
+  formaPagamento FormaPagamento @relation(fields: [formaPagamentoId], references: [id])
+}
+
+model Venda {
+  id            Int      @id @default(autoincrement())
+  data          DateTime @default(now())
+  valorTotal    Decimal  @db.Decimal(10, 2)
+  status        String
+  clienteId     Int
+  empresaId     Int
+  usuarioId     Int
+  criadoEm      DateTime @default(now())
+  tipoDesconto  String? // "valor" | "percentual" | null
+  valorDesconto Decimal? @db.Decimal(10, 2)
+
+  cliente        Cliente          @relation(fields: [clienteId], references: [id])
+  empresa        Empresa          @relation(fields: [empresaId], references: [id])
+  usuario        Usuario          @relation(fields: [usuarioId], references: [id])
+  itens          VendaItem[]
+  PagamentoVenda PagamentoVenda[]
+}
+
+model VendaItem {
+  id            Int      @id @default(autoincrement())
+  vendaId       Int
+  produtoId     Int
+  quantidade    Int
+  valorUnit     Decimal  @db.Decimal(10, 2)
+  subtotal      Decimal? @db.Decimal(10, 2)
+  tipoDesconto  String? // "valor" ou "percentual"
+  valorDesconto Decimal? @db.Decimal(10, 2)
+
+  venda   Venda   @relation(fields: [vendaId], references: [id])
+  produto Produto @relation(fields: [produtoId], references: [id])
 }
 
 model NotaFiscal {

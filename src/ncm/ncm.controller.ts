@@ -58,6 +58,7 @@ export class NcmController {
         totalPages: 1,
         cfop: [
           {
+            id: 1,
             codigo: 5102,
             descricao: 'Dentro do estado',
           },
@@ -76,6 +77,7 @@ export class NcmController {
     description: 'Lista de cst retornada com sucesso.',
     schema: {
       example: {
+        id: 1,
         codigo: 5102,
         descricao: 'Dentro do estado',
       },
