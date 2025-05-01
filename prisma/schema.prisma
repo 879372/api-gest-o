@@ -10,27 +10,27 @@ datasource db {
 model Empresa {
   id                 Int          @id @default(autoincrement())
   nome               String
-  fantasia           String?
-  tipo               String
+  endereco           String?
+  criadoEm           DateTime     @default(now())
+  bairro             String?
+  cep                String?
+  cidade             String?
   documento          String       @unique
+  email              String?
+  fantasia           String?
+  logo               String?
+  telefone           String?
+  tipo               String
+  uf                 String?
+  csc                String?
+  cscId              String?
   inscricaoEstadual  String?
   inscricaoMunicipal String?
   regimeTributario   String?
-  csc                String?
-  cscId              String?
-  email              String?
-  telefone           String?
-  cep                String?
-  uf                 String?
-  bairro             String?
-  cidade             String?
-  endereco           String?
-  logo               String?
-  usuarios           Usuario[]
   clientes           Cliente[]
-  produtos           Produto[]
   notasFiscais       NotaFiscal[]
-  criadoEm           DateTime     @default(now())
+  produtos           Produto[]
+  usuarios           Usuario[]
 }
 
 model Usuario {
@@ -39,50 +39,50 @@ model Usuario {
   email     String   @unique
   senha     String
   empresaId Int
-  empresa   Empresa  @relation(fields: [empresaId], references: [id])
   criadoEm  DateTime @default(now())
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
 }
 
 model Cliente {
   id                Int          @id @default(autoincrement())
   nome              String
-  tipo              String
-  documento         String       @unique
-  inscricaoEstadual String?
   email             String?
   telefone          String?
-  cep               String?
-  uf                String?
-  bairro            String?
-  cidade            String?
-  endereco          String?
   empresaId         Int
+  criadoEm          DateTime     @default(now())
+  bairro            String?
+  cep               String?
+  cidade            String?
+  documento         String       @unique
+  endereco          String?
+  inscricaoEstadual String?
+  tipo              String
+  uf                String?
   empresa           Empresa      @relation(fields: [empresaId], references: [id])
   notasFiscais      NotaFiscal[]
-  criadoEm          DateTime     @default(now())
 }
 
 model Produto {
   id           Int           @id @default(autoincrement())
   nome         String
   descricao    String?
-  unidade      String
   precoCusto   Decimal       @db.Decimal(10, 2)
   precoVenda   Decimal       @db.Decimal(10, 2)
-  origem       String?
   empresaId    Int
-  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  criadoEm     DateTime      @default(now())
+  cfopId       Int?
+  csosnId      Int?
+  cstId        Int?
+  ncmId        Int?
+  origem       String?
+  unidade      String
   estoque      Estoque?
   notaProdutos NotaProduto[]
-  cfopId       Int?
   cfop         CFOP?         @relation(fields: [cfopId], references: [id])
-  ncmId        Int?
-  ncm          NCM?          @relation(fields: [ncmId], references: [id])
-  cstId        Int?
-  cst          CST?          @relation(fields: [cstId], references: [id])
-  csosnId      Int?
   csosn        CSOSN?        @relation(fields: [csosnId], references: [id])
-  criadoEm     DateTime      @default(now())
+  cst          CST?          @relation(fields: [cstId], references: [id])
+  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  ncm          NCM?          @relation(fields: [ncmId], references: [id])
 }
 
 model Estoque {
@@ -106,12 +106,12 @@ model NotaFiscal {
   valorTotal       Decimal       @db.Decimal(10, 2)
   clienteId        Int
   empresaId        Int
-  cliente          Cliente       @relation(fields: [clienteId], references: [id])
-  empresa          Empresa       @relation(fields: [empresaId], references: [id])
-  notaProdutos     NotaProduto[]
   status           String
   xml              String
   criadoEm         DateTime      @default(now())
+  cliente          Cliente       @relation(fields: [clienteId], references: [id])
+  empresa          Empresa       @relation(fields: [empresaId], references: [id])
+  notaProdutos     NotaProduto[]
 }
 
 model NotaProduto {
@@ -128,42 +128,42 @@ model NotaProduto {
   icms          Decimal?   @db.Decimal(5, 2)
   pis           Decimal?   @db.Decimal(5, 2)
   cofins        Decimal?   @db.Decimal(5, 2)
+  cfop          CFOP       @relation(fields: [cfopId], references: [id])
+  csosn         CSOSN?     @relation(fields: [csosnId], references: [id])
+  cst           CST        @relation(fields: [cstId], references: [id])
+  ncm           NCM        @relation(fields: [ncmId], references: [id])
   notaFiscal    NotaFiscal @relation(fields: [notaFiscalId], references: [id])
   produto       Produto    @relation(fields: [produtoId], references: [id])
-  cfop          CFOP       @relation(fields: [cfopId], references: [id])
-  ncm           NCM        @relation(fields: [ncmId], references: [id])
-  cst           CST        @relation(fields: [cstId], references: [id])
-  csosn         CSOSN?     @relation(fields: [csosnId], references: [id])
 }
 
 model CFOP {
   id           Int           @id @default(autoincrement())
   codigo       String        @unique
   descricao    String
-  produtos     Produto[]
   notaProdutos NotaProduto[]
+  produtos     Produto[]
 }
 
 model NCM {
   id           Int           @id @default(autoincrement())
   codigo       String        @unique
   descricao    String
-  produtos     Produto[]
   notaProdutos NotaProduto[]
+  produtos     Produto[]
 }
 
 model CST {
   id           Int           @id @default(autoincrement())
   codigo       String        @unique
   descricao    String
-  produtos     Produto[]
   notaProdutos NotaProduto[]
+  produtos     Produto[]
 }
 
 model CSOSN {
   id           Int           @id @default(autoincrement())
   codigo       String        @unique
   descricao    String
-  produtos     Produto[]
   notaProdutos NotaProduto[]
+  produtos     Produto[]
 }
