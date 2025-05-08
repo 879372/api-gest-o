@@ -49,7 +49,7 @@ export class CfopController {
   @ApiOperation({ summary: 'Listar todos os cfops' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de empresas retornada com sucesso.',
+    description: 'Lista de cfops retornada com sucesso.',
     schema: {
       example: {
         totalRecords: 1,

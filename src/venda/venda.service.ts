@@ -17,6 +17,7 @@ export class VendaService {
       clienteId,
       empresaId,
       usuarioId,
+      caixaId,
       itens,
       pagamentos,
       tipoDesconto,
@@ -27,6 +28,7 @@ export class VendaService {
     const cliente = await this.prisma.cliente.findUnique({
       where: { id: clienteId },
     });
+
     if (!cliente)
       throw new BadRequestException(
         `Cliente com ID ${clienteId} não encontrado.`,
@@ -35,6 +37,7 @@ export class VendaService {
     const empresa = await this.prisma.empresa.findUnique({
       where: { id: empresaId },
     });
+
     if (!empresa)
       throw new BadRequestException(
         `Empresa com ID ${empresaId} não encontrada.`,
@@ -43,10 +46,18 @@ export class VendaService {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id: usuarioId },
     });
+
     if (!usuario)
       throw new BadRequestException(
         `Usuário com ID ${usuarioId} não encontrado.`,
       );
+
+    const caixa = await this.prisma.caixa.findUnique({
+      where: { id: caixaId },
+    });
+
+    if (!caixa)
+      throw new BadRequestException(`Caixa com ID ${caixaId} não encontrado.`);
 
     // Verifica existência dos produtos
     for (const item of itens) {
@@ -118,6 +129,7 @@ export class VendaService {
         clienteId,
         empresaId,
         usuarioId,
+        caixaId,
         tipoDesconto,
         valorDesconto,
         itens: {

@@ -58,6 +58,10 @@ export class CreateVendaDto {
   @IsNumber()
   valorTotal: number;
 
+  @ApiProperty({ description: 'ID do caixa' })
+  @IsInt()
+  caixaId: number;
+
   @ApiProperty({ description: 'ID do cliente' })
   @IsInt()
   clienteId: number;

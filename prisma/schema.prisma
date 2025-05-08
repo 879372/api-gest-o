@@ -32,6 +32,7 @@ model Empresa {
   produtos           Produto[]
   usuarios           Usuario[]
   vendas             Venda[]
+  Caixa              Caixa[]
 }
 
 model Usuario {
@@ -43,6 +44,7 @@ model Usuario {
   criadoEm  DateTime @default(now())
   vendas    Venda[]
   empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  Caixa     Caixa[]
 }
 
 model Cliente {
@@ -121,6 +123,7 @@ model Venda {
   clienteId     Int
   empresaId     Int
   usuarioId     Int
+  caixaId       Int
   criadoEm      DateTime @default(now())
   tipoDesconto  String? // "valor" | "percentual" | null
   valorDesconto Decimal? @db.Decimal(10, 2)
@@ -130,6 +133,7 @@ model Venda {
   usuario        Usuario          @relation(fields: [usuarioId], references: [id])
   itens          VendaItem[]
   PagamentoVenda PagamentoVenda[]
+  caixa          Caixa?           @relation("VendasCaixa", fields: [caixaId], references: [id])
 }
 
 model VendaItem {
@@ -144,6 +148,22 @@ model VendaItem {
 
   venda   Venda   @relation(fields: [vendaId], references: [id])
   produto Produto @relation(fields: [produtoId], references: [id])
+}
+
+model Caixa {
+  id             Int       @id @default(autoincrement())
+  dataAbertura   DateTime  @default(now())
+  dataFechamento DateTime?
+  valorInicial   Decimal   @db.Decimal(10, 2)
+  valorFinal     Decimal?  @db.Decimal(10, 2)
+  observacoes    String?
+  status         String    @default("ABERTO")
+  usuarioId      Int
+  empresaId      Int
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  vendas  Venda[] @relation("VendasCaixa")
 }
 
 model NotaFiscal {

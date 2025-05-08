@@ -12,9 +12,10 @@ import { CstModule } from './cst/cst.module';
 import { CsosnModule } from './csosn/csosn.module';
 import { PagamentoModule } from './pagamento/pagamento.module';
 import { VendaModule } from './venda/venda.module';
+import { CaixaModule } from './caixa/caixa.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, EmpresaModule, ClienteModule, ProdutoModule, CfopModule, NcmModule, CstModule, CsosnModule, PagamentoModule, VendaModule],
+  imports: [PrismaModule, AuthModule, EmpresaModule, ClienteModule, ProdutoModule, CfopModule, NcmModule, CstModule, CsosnModule, PagamentoModule, VendaModule, CaixaModule],
   controllers: [UsuarioController],
   providers: [UsuarioService],
   exports: [],
